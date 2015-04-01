@@ -8,15 +8,37 @@
 
 #include <avr/io.h>
 #include <avr/pgmspace.h>
+#include <util/delay.h>
 #include <string.h>
 #include <asf.h>
 #include "sp_driver.h"
 #include "protocol.h"
 
+typedef void (*AppPtr)(void) __attribute__ ((noreturn));
+
 uint8_t	page_buffer[APP_SECTION_PAGE_SIZE];
 
+/**************************************************************************************************
+* Main entry point
+*/
 int main(void)
 {
+	// check for VUSB
+	PORTD.DIRCLR = PIN5_bm;
+	PORTD.PIN5CTRL = (PORTD.PIN5CTRL & ~PORT_OPC_gm) | PORT_OPC_PULLDOWN_gc;
+	_delay_ms(1);
+	if (!(PORTD.IN & PIN5_bm))	// not connected to USB
+	{
+		// exit bootloader
+		AppPtr application_vector = (AppPtr)0x000000;
+		CCP = CCP_IOREG_gc;		// unlock IVSEL
+		PMIC.CTRL = 0;			// disable interrupts
+		EIND = 0;				// indirect jumps go to app section
+		RAMPZ = 0;				// LPM uses lower 64k of flash
+		application_vector();
+	}
+	
+	// set up USB HID bootloader interface
 	sysclk_init();
 	irq_initialize_vectors();
 	cpu_irq_enable();
@@ -25,6 +47,9 @@ int main(void)
 	for(;;);
 }
 
+/**************************************************************************************************
+* Calculate app section and bootloader CRC32 values
+*/
 void calc_fw_crcs(uint32_t *app_crc, uint32_t *boot_crc)
 {
 	uint32_t address;
@@ -51,6 +76,9 @@ void calc_fw_crcs(uint32_t *app_crc, uint32_t *boot_crc)
 	RAMPZ = 0;		// clean up after pgm_read_byte_far()
 }
 
+/**************************************************************************************************
+* Handle received HID reports
+*/
 void hid_report_out(uint8_t *report)
 {
 	uint8_t		response[32+2+1];
@@ -63,29 +91,35 @@ void hid_report_out(uint8_t *report)
 
 	switch(report[0])
 	{
+		// no-op
 		case CMD_NOP:
 			break;
 		
+		// write to RAM page buffer
 		case CMD_WRITE_BUFFER:
 			if (addr > (APP_SECTION_PAGE_SIZE - 32))
 				return;
 			memcpy(&page_buffer[addr], &report[3], 32);
 			return;		// no response to speed things up
 		
+		// read from RAM page buffer
 		case CMD_READ_BUFFER:
 			memcpy(&response[3], &page_buffer[addr], 32);
 			break;
 		
+		// erase entire application section
 		case CMD_ERASE_APP_SECTION:
 			SP_WaitForSPM();
 			SP_EraseApplicationSection();
 			break;
 		
-		case CMD_READ_APP_SECTION_CRC:
+		// calculate application and bootloader section CRCs
+		case CMD_READ_FLASH_CRCS:
 			SP_WaitForSPM();
 			calc_fw_crcs((uint32_t *)&response[3], (uint32_t *)&response[7]);
 			break;
 		
+		// read MCU IDs
 		case CMD_READ_MCU_IDS:
 			report[3] = MCU.DEVID0;
 			report[3] = MCU.DEVID1;
@@ -93,6 +127,7 @@ void hid_report_out(uint8_t *report)
 			report[3] = MCU.REVID;
 			break;
 		
+		// read fuses
 		case CMD_READ_FUSES:
 			response[3] = SP_ReadFuseByte(0);
 			response[4] = SP_ReadFuseByte(1);
@@ -102,14 +137,22 @@ void hid_report_out(uint8_t *report)
 			response[8] = SP_ReadFuseByte(5);
 			break;
 		
+		// write RAM page buffer to application section page
 		case CMD_WRITE_PAGE:
+			if (addr > (APP_SECTION_SIZE / APP_SECTION_PAGE_SIZE))	// out of range
+			{
+				response[1] = 0xFF;
+				response[2] = 0xFF;
+				break;
+			}
 			SP_WaitForSPM();
 			SP_LoadFlashPage(page_buffer);
 			SP_WriteApplicationPage(APP_SECTION_START + ((uint32_t)addr * APP_SECTION_PAGE_SIZE));
 			break;
 		
+		// read application page to RAM buffer and return first 32 bytes
 		case CMD_READ_PAGE:
-			if (addr > (APP_SECTION_SIZE / APP_SECTION_PAGE_SIZE))
+			if (addr > (APP_SECTION_SIZE / APP_SECTION_PAGE_SIZE))	// out of range
 			{
 				response[1] = 0xFF;
 				response[2] = 0xFF;
@@ -121,17 +164,20 @@ void hid_report_out(uint8_t *report)
 			}
 			break;
 		
+		// erase user signature row
 		case CMD_ERASE_USER_SIG_ROW:
 			SP_WaitForSPM();
 			SP_EraseUserSignatureRow();
 			break;
 		
+		// write RAM buffer to user signature row
 		case CMD_WRITE_USER_SIG_ROW:
 			SP_WaitForSPM();
 			SP_LoadFlashPage(page_buffer);
 			SP_WriteUserSignatureRow();
 			break;
 
+		// read user signature row to RAM buffer and return first 32 bytes
 		case CMD_READ_USER_SIG_ROW:
 			if (addr > (USER_SIGNATURES_PAGE_SIZE - 32))
 			{
@@ -145,6 +191,7 @@ void hid_report_out(uint8_t *report)
 			}
 			break;
 		
+		// unknown command
 		default:
 			response[0] = 0xFF;
 			break;
