@@ -1,0 +1,23 @@
+// bootloader.h
+
+#define	CMD_NOP							0x00
+#define CMD_WRITE_BUFFER				0x01
+#define CMD_READ_BUFFER					0x02
+#define CMD_ERASE_APP_SECTION			0x03
+#define CMD_READ_FLASH_CRCS				0x04
+#define CMD_READ_MCU_IDS				0x05
+#define CMD_READ_FUSES					0x06
+#define CMD_WRITE_PAGE					0x07
+#define CMD_READ_PAGE					0x08
+#define CMD_ERASE_USER_SIG_ROW			0x09
+#define CMD_WRITE_USER_SIG_ROW			0x0A
+#define CMD_READ_USER_SIG_ROW			0x0B
+
+
+#define	APP_SECTION_ERASE_TIMEOUT_MS	2000
+#define	APP_SECTION_NUM_PAGES			256
+#define	APP_SECTION_PAGE_SIZE			512
+#define	READ_FLASH_CRCS_TIMEOUT_MS		5000
+
+
+#define	HID_DATA_BYTES					32
