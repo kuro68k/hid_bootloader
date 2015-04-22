@@ -169,6 +169,7 @@ SP_ReadWord:
 
 SP_ReadCalibrationByte:
 	ldi	r20, NVM_CMD_READ_CALIB_ROW_gc    ; Prepare NVM command in R20.
+	clr r25
 	rjmp	SP_CommonLPM                      ; Jump to common LPM code.
 
 

@@ -16,23 +16,28 @@
 
 typedef void (*AppPtr)(void) __attribute__ ((noreturn));
 
-uint8_t	page_buffer[APP_SECTION_PAGE_SIZE];
+uint8_t		page_buffer[APP_SECTION_PAGE_SIZE + UDI_HID_REPORT_OUT_SIZE];	// needed size + safety buffer
+uint16_t	page_ptr = 0;
 
 /**************************************************************************************************
 * Main entry point
 */
 int main(void)
 {
+	CCP = CCP_IOREG_gc;				// unlock IVSEL
+	PMIC.CTRL |= PMIC_IVSEL_bm;		// set interrupt vector table to bootloader section
+	
 	// check for VUSB
 	PORTD.DIRCLR = PIN5_bm;
 	PORTD.PIN5CTRL = (PORTD.PIN5CTRL & ~PORT_OPC_gm) | PORT_OPC_PULLDOWN_gc;
 	_delay_ms(1);
-	if (!(PORTD.IN & PIN5_bm))	// not connected to USB
+	if (0)
+	//if (!(PORTD.IN & PIN5_bm))	// not connected to USB
 	{
 		// exit bootloader
 		AppPtr application_vector = (AppPtr)0x000000;
 		CCP = CCP_IOREG_gc;		// unlock IVSEL
-		PMIC.CTRL = 0;			// disable interrupts
+		PMIC.CTRL = 0;			// disable interrupts, set vector table to app section
 		EIND = 0;				// indirect jumps go to app section
 		RAMPZ = 0;				// LPM uses lower 64k of flash
 		application_vector();
@@ -43,6 +48,7 @@ int main(void)
 	irq_initialize_vectors();
 	cpu_irq_enable();
 	udc_start();
+	udc_attach();
 	
 	for(;;);
 }
@@ -77,11 +83,34 @@ void calc_fw_crcs(uint32_t *app_crc, uint32_t *boot_crc)
 }
 
 /**************************************************************************************************
-* Handle received HID reports
+** Convert lower nibble to hex char
 */
-void hid_report_out(uint8_t *report)
+uint8_t hex_to_char(uint8_t hex)
 {
-	uint8_t		response[32+2+1];
+	if (hex < 10)
+		hex += '0';
+	else
+		hex += 'A' - 10;
+	
+	return(hex);
+}
+
+/**************************************************************************************************
+* Handle received HID report out requests
+*/
+void HID_report_out(uint8_t *report)
+{
+	memcpy(&page_buffer[page_ptr], report, UDI_HID_REPORT_OUT_SIZE);
+	page_ptr += UDI_HID_REPORT_OUT_SIZE;
+	page_ptr &= APP_SECTION_PAGE_SIZE-1;
+}
+
+/**************************************************************************************************
+* Handle received HID set feature reports
+*/
+void HID_set_feature_report_out(uint8_t *report)
+{
+	uint8_t		response[UDI_HID_REPORT_OUT_SIZE];
 	response[0] = report[0] | 0x80;
 	response[1] = report[1];
 	response[2] = report[2];
@@ -96,22 +125,22 @@ void hid_report_out(uint8_t *report)
 			break;
 		
 		// write to RAM page buffer
-		case CMD_WRITE_BUFFER:
-			if (addr > (APP_SECTION_PAGE_SIZE - 32))
-				return;
-			memcpy(&page_buffer[addr], &report[3], 32);
-			return;		// no response to speed things up
+		case CMD_RESET_POINTER:
+			page_ptr = 0;
+			return;
 		
 		// read from RAM page buffer
 		case CMD_READ_BUFFER:
-			memcpy(&response[3], &page_buffer[addr], 32);
+			memcpy(response, &page_buffer[page_ptr], UDI_HID_REPORT_OUT_SIZE);
+			page_ptr += UDI_HID_REPORT_OUT_SIZE;
+			page_ptr &= APP_SECTION_PAGE_SIZE-1;
 			break;
 		
 		// erase entire application section
 		case CMD_ERASE_APP_SECTION:
 			SP_WaitForSPM();
 			SP_EraseApplicationSection();
-			break;
+			return;
 		
 		// calculate application and bootloader section CRCs
 		case CMD_READ_FLASH_CRCS:
@@ -161,6 +190,7 @@ void hid_report_out(uint8_t *report)
 			{
 				memcpy_P(page_buffer, (const void *)((APP_SECTION_START) + (APP_SECTION_PAGE_SIZE * addr)), APP_SECTION_PAGE_SIZE);
 				memcpy(&response[3], page_buffer, 32);
+				page_ptr = 0;
 			}
 			break;
 		
@@ -188,8 +218,38 @@ void hid_report_out(uint8_t *report)
 			{
 				memcpy_P(page_buffer, (const void *)(USER_SIGNATURES_SIZE + addr), USER_SIGNATURES_SIZE);
 				memcpy(&response[3], page_buffer, 32);
+				page_ptr = 0;
 			}
 			break;
+
+		case CMD_READ_SERIAL:
+			{
+				uint8_t	i;
+				uint8_t	j = 3;
+				uint8_t b;
+	
+				for (i = 0; i < 6; i++)
+				{
+					b = SP_ReadCalibrationByte(offsetof(NVM_PROD_SIGNATURES_t, LOTNUM0) + i);
+					response[j++] = hex_to_char(b >> 4);
+					response[j++] = hex_to_char(b & 0x0F);
+				}
+				response[j++] = '-';
+				b = SP_ReadCalibrationByte(offsetof(NVM_PROD_SIGNATURES_t, LOTNUM0) + 6);
+				response[j++] = hex_to_char(b >> 4);
+				response[j++] = hex_to_char(b & 0x0F);
+				response[j++] = '-';
+
+				for (i = 7; i < 11; i++)
+				{
+					b = SP_ReadCalibrationByte(offsetof(NVM_PROD_SIGNATURES_t, LOTNUM0) + i);
+					response[j++] = hex_to_char(b >> 4);
+					response[j++] = hex_to_char(b & 0x0F);
+				}
+
+				response[j] = '\0';
+				break;
+			}
 		
 		// unknown command
 		default:

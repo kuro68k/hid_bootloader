@@ -70,8 +70,13 @@
 
 //! USB Device string definitions (Optional)
  #define  USB_DEVICE_MANUFACTURE_NAME      "Keio"
- #define  USB_DEVICE_PRODUCT_NAME          "Joystick Bootloader"
+ #define  USB_DEVICE_PRODUCT_NAME          "USB Bootloader"
 // #define  USB_DEVICE_SERIAL_NAME           "12...EF"
+//#define	USB_DEVICE_SERIAL_NAME
+//#define	USB_DEVICE_GET_SERIAL_NAME_POINTER USB_serial_number
+//#define	USB_DEVICE_GET_SERIAL_NAME_LENGTH  25
+//extern uint8_t USB_serial_number[];
+
 
 /**
  * Device speeds support
@@ -123,7 +128,7 @@
 #define  UDI_HID_GENERIC_ENABLE_EXT()       true
 #define  UDI_HID_GENERIC_DISABLE_EXT()
 #define  UDI_HID_GENERIC_REPORT_OUT(ptr)
-#define  UDI_HID_GENERIC_SET_FEATURE(f)
+//#define  UDI_HID_GENERIC_SET_FEATURE(f)
 /*
  * #define UDI_HID_GENERIC_ENABLE_EXT() my_callback_generic_enable()
  * extern bool my_callback_generic_enable(void);
@@ -134,11 +139,13 @@
  * #define  UDI_HID_GENERIC_SET_FEATURE(f) my_callback_generic_set_feature(f)
  * extern void my_callback_generic_set_feature(uint8_t *report_feature);
  */
+#define  UDI_HID_GENERIC_SET_FEATURE(f) HID_set_feature_report_out(f)
+extern void HID_set_feature_report_out(uint8_t *report);
 
 //! Sizes of I/O reports
-#define  UDI_HID_REPORT_IN_SIZE             (32+2+1)
-#define  UDI_HID_REPORT_OUT_SIZE            (32+2+1)
-#define  UDI_HID_REPORT_FEATURE_SIZE        4
+#define  UDI_HID_REPORT_IN_SIZE             64
+#define  UDI_HID_REPORT_OUT_SIZE            64
+#define  UDI_HID_REPORT_FEATURE_SIZE        64
 
 //! Sizes of I/O endpoints
 #define  UDI_HID_GENERIC_EP_SIZE            64

@@ -497,6 +497,7 @@ void udd_enable(void)
 #ifndef USB_DEVICE_ATTACH_AUTO_DISABLE
 	udd_attach();
 #endif
+
 	cpu_irq_restore(flags);
 }
 
