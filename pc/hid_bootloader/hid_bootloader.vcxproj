@@ -80,6 +80,7 @@
   <ItemGroup>
     <ClInclude Include="bootloader.h" />
     <ClInclude Include="crc.h" />
+    <ClInclude Include="getopt.h" />
     <ClInclude Include="hidapi.h" />
     <ClInclude Include="intel_hex.h" />
     <ClInclude Include="stdafx.h" />

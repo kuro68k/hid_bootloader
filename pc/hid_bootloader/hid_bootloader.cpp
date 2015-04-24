@@ -8,6 +8,7 @@
 #include <string.h>
 #include <windows.h>
 
+//#include "getopt.h"
 #include "hidapi.h"
 #include "intel_hex.h"
 #include "bootloader.h"
