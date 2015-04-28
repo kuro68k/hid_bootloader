@@ -128,32 +128,32 @@ void HID_set_feature_report_out(uint8_t *report)
 		case CMD_RESET_POINTER:
 			page_ptr = 0;
 			return;
-		
+/*		
 		// read from RAM page buffer
 		case CMD_READ_BUFFER:
 			memcpy(response, &page_buffer[page_ptr], UDI_HID_REPORT_OUT_SIZE);
 			page_ptr += UDI_HID_REPORT_OUT_SIZE;
 			page_ptr &= APP_SECTION_PAGE_SIZE-1;
 			break;
-		
+*/
 		// erase entire application section
 		case CMD_ERASE_APP_SECTION:
 			SP_WaitForSPM();
 			SP_EraseApplicationSection();
 			return;
-		
+
 		// calculate application and bootloader section CRCs
 		case CMD_READ_FLASH_CRCS:
 			SP_WaitForSPM();
 			calc_fw_crcs((uint32_t *)&response[3], (uint32_t *)&response[7]);
 			break;
-		
+
 		// read MCU IDs
 		case CMD_READ_MCU_IDS:
-			report[3] = MCU.DEVID0;
-			report[3] = MCU.DEVID1;
-			report[3] = MCU.DEVID2;
-			report[3] = MCU.REVID;
+			response[3] = MCU.DEVID0;
+			response[4] = MCU.DEVID1;
+			response[5] = MCU.DEVID2;
+			response[6] = MCU.REVID;
 			break;
 		
 		// read fuses
@@ -177,8 +177,9 @@ void HID_set_feature_report_out(uint8_t *report)
 			SP_WaitForSPM();
 			SP_LoadFlashPage(page_buffer);
 			SP_WriteApplicationPage(APP_SECTION_START + ((uint32_t)addr * APP_SECTION_PAGE_SIZE));
+			page_ptr = 0;
 			break;
-		
+/*		
 		// read application page to RAM buffer and return first 32 bytes
 		case CMD_READ_PAGE:
 			if (addr > (APP_SECTION_SIZE / APP_SECTION_PAGE_SIZE))	// out of range
@@ -221,7 +222,7 @@ void HID_set_feature_report_out(uint8_t *report)
 				page_ptr = 0;
 			}
 			break;
-
+*/
 		case CMD_READ_SERIAL:
 			{
 				uint8_t	i;

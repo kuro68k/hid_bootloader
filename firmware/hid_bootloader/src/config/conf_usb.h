@@ -127,7 +127,7 @@
 //! Interface callback definition
 #define  UDI_HID_GENERIC_ENABLE_EXT()       true
 #define  UDI_HID_GENERIC_DISABLE_EXT()
-#define  UDI_HID_GENERIC_REPORT_OUT(ptr)
+//#define  UDI_HID_GENERIC_REPORT_OUT(ptr)
 //#define  UDI_HID_GENERIC_SET_FEATURE(f)
 /*
  * #define UDI_HID_GENERIC_ENABLE_EXT() my_callback_generic_enable()
@@ -139,6 +139,8 @@
  * #define  UDI_HID_GENERIC_SET_FEATURE(f) my_callback_generic_set_feature(f)
  * extern void my_callback_generic_set_feature(uint8_t *report_feature);
  */
+#define  UDI_HID_GENERIC_REPORT_OUT(ptr) HID_report_out(ptr)
+extern void HID_report_out(uint8_t *report);
 #define  UDI_HID_GENERIC_SET_FEATURE(f) HID_set_feature_report_out(f)
 extern void HID_set_feature_report_out(uint8_t *report);
 
