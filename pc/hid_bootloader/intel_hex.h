@@ -4,7 +4,7 @@
 #define __INTEL_HEX_H
 
 
-#define	FIRMWARE_BUFFER_SIZE		(256*512)
+#define	FIRMWARE_BUFFER_SIZE		(512*512)	// 256k devices have 512 pages of 512 bytes each
 
 
 // data embedded in firmware image

@@ -145,9 +145,10 @@ bool ReadHexFile(char *filename)
 	*/
 	FW_INFO_t zzz;
 	info = &zzz;
-	info->flash_size_b = 0x20000;
-	firmware_crc = crc32(firmware_buffer, info->flash_size_b);
-	printf("Firmware CRC:\t%lX\n", firmware_crc);
+	info->flash_size_b = 0x40000;
+	//firmware_crc = crc32(firmware_buffer, info->flash_size_b);
+	firmware_crc = xmega_nvm_crc32(firmware_buffer, info->flash_size_b);
+	printf("Firmware CRC:\t0x%lX\n", firmware_crc);
 
 exit:
 	fclose(fp);

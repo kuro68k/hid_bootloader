@@ -14,6 +14,8 @@
 #include "sp_driver.h"
 #include "protocol.h"
 
+#define BOOTLOADER_VERSION	1
+
 typedef void (*AppPtr)(void) __attribute__ ((noreturn));
 
 uint8_t		page_buffer[APP_SECTION_PAGE_SIZE + UDI_HID_REPORT_OUT_SIZE];	// needed size + safety buffer
@@ -51,35 +53,6 @@ int main(void)
 	udc_attach();
 	
 	for(;;);
-}
-
-/**************************************************************************************************
-* Calculate app section and bootloader CRC32 values
-*/
-void calc_fw_crcs(uint32_t *app_crc, uint32_t *boot_crc)
-{
-	uint32_t address;
-
-	// application
-	CRC.CTRL = CRC_RESET_RESET1_gc;
-	CRC.CTRL = CRC_CRC32_bm | CRC_SOURCE_IO_gc;
-	for(address = APP_SECTION_START; address < (APP_SECTION_END + 1); address++)
-		CRC.DATAIN = pgm_read_byte_far(address);
-	CRC.STATUS = CRC_BUSY_bm;
-
-	*app_crc = (uint32_t)CRC.CHECKSUM0 | ((uint32_t)CRC.CHECKSUM1 << 8) | ((uint32_t)CRC.CHECKSUM2 << 16) | ((uint32_t)CRC.CHECKSUM3 << 24);
-
-	// bootloader
-	CRC.CTRL = CRC_RESET_RESET1_gc;
-	CRC.CTRL = CRC_CRC32_bm | CRC_SOURCE_IO_gc;
-	for(address = BOOT_SECTION_START; address < (BOOT_SECTION_END + 1); address++)
-		CRC.DATAIN = pgm_read_byte_far(address);
-	CRC.STATUS = CRC_BUSY_bm;
-
-	*boot_crc = (uint32_t)CRC.CHECKSUM0 | ((uint32_t)CRC.CHECKSUM1 << 8) | ((uint32_t)CRC.CHECKSUM2 << 16) | ((uint32_t)CRC.CHECKSUM3 << 24);
-
-	CRC.CTRL = 0;
-	RAMPZ = 0;		// clean up after pgm_read_byte_far()
 }
 
 /**************************************************************************************************
@@ -128,14 +101,14 @@ void HID_set_feature_report_out(uint8_t *report)
 		case CMD_RESET_POINTER:
 			page_ptr = 0;
 			return;
-/*		
+
 		// read from RAM page buffer
 		case CMD_READ_BUFFER:
 			memcpy(response, &page_buffer[page_ptr], UDI_HID_REPORT_OUT_SIZE);
 			page_ptr += UDI_HID_REPORT_OUT_SIZE;
 			page_ptr &= APP_SECTION_PAGE_SIZE-1;
 			break;
-*/
+
 		// erase entire application section
 		case CMD_ERASE_APP_SECTION:
 			SP_WaitForSPM();
@@ -145,7 +118,8 @@ void HID_set_feature_report_out(uint8_t *report)
 		// calculate application and bootloader section CRCs
 		case CMD_READ_FLASH_CRCS:
 			SP_WaitForSPM();
-			calc_fw_crcs((uint32_t *)&response[3], (uint32_t *)&response[7]);
+			*(uint32_t *)&response[3] = SP_ApplicationCRC();
+			*(uint32_t *)&response[7] = SP_BootCRC();
 			break;
 
 		// read MCU IDs
@@ -179,7 +153,7 @@ void HID_set_feature_report_out(uint8_t *report)
 			SP_WriteApplicationPage(APP_SECTION_START + ((uint32_t)addr * APP_SECTION_PAGE_SIZE));
 			page_ptr = 0;
 			break;
-/*		
+
 		// read application page to RAM buffer and return first 32 bytes
 		case CMD_READ_PAGE:
 			if (addr > (APP_SECTION_SIZE / APP_SECTION_PAGE_SIZE))	// out of range
@@ -222,7 +196,7 @@ void HID_set_feature_report_out(uint8_t *report)
 				page_ptr = 0;
 			}
 			break;
-*/
+
 		case CMD_READ_SERIAL:
 			{
 				uint8_t	i;
@@ -251,6 +225,10 @@ void HID_set_feature_report_out(uint8_t *report)
 				response[j] = '\0';
 				break;
 			}
+		
+		case CMD_READ_BOOTLOADER_VERSION:
+			response[3] = BOOTLOADER_VERSION;
+			break;
 		
 		// unknown command
 		default:

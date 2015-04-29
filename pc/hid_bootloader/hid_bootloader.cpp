@@ -146,7 +146,7 @@ bool UpdateFirmware(hid_device *handle)
 		printf("Failed to erase application section.\n");
 		return false;
 	}
-	
+
 
 	// write app section
 	printf("Writing firmware image...");
@@ -187,7 +187,7 @@ bool UpdateFirmware(hid_device *handle)
 
 	uint32_t app_crc;
 	app_crc = buffer[IDX_DATA-1] | (buffer[IDX_DATA] << 8) | (buffer[IDX_DATA + 1] << 16) | (buffer[IDX_DATA + 2] << 24);
-	printf("Application CRC:\t%lX\n", app_crc);
+	printf("Target CRC:\t0x%lX\n", app_crc);
 	if (app_crc != firmware_crc)
 	{
 		printf("Firmware image CRC does not match device.\n");
