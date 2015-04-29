@@ -124,7 +124,7 @@ bool ReadHexFile(char *filename)
 	}
 
 	printf("Firmware size:\t%u bytes (0x%X)\n", firmware_size, firmware_size);
-	/*
+
 	// find embedded info
 	uint32_t ptr = FindEmbeddedInfo();
 	if (ptr == 0xFFFFFFFF)
@@ -141,14 +141,20 @@ bool ReadHexFile(char *filename)
 		res = false;
 		goto exit;
 	}
-	printf("Flash size:\t%u bytes (0x%X)\n", info->flash_size_b, info->flash_size_b);
-	*/
+
+	/*
 	FW_INFO_t zzz;
 	info = &zzz;
 	info->flash_size_b = 0x40000;
-	//firmware_crc = crc32(firmware_buffer, info->flash_size_b);
+	*/
 	firmware_crc = xmega_nvm_crc32(firmware_buffer, info->flash_size_b);
 	printf("Firmware CRC:\t0x%lX\n", firmware_crc);
+
+	printf("\n");
+	printf("Flash size:\t%u bytes (0x%X)\n", info->flash_size_b, info->flash_size_b);
+	printf("Page sise:\t%u bytes\n", info->page_size_b);
+	printf("Version:\t%u.%02u\n", info->version_major, info->version_minor);
+	printf("\n");
 
 exit:
 	fclose(fp);

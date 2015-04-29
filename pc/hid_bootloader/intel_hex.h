@@ -8,6 +8,7 @@
 
 
 // data embedded in firmware image
+#pragma pack(1)
 typedef struct {
 	char		magic_string[8];		// YamaNeko
 	uint8_t		version_major;
@@ -18,6 +19,7 @@ typedef struct {
 	uint32_t	eeprom_size_b;
 	uint16_t	eeprom_page_size_b;
 } FW_INFO_t;
+#pragma pack()
 
 #define	MAGIC_STRING				"YamaNeko"
 
