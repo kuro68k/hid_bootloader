@@ -70,6 +70,7 @@ int main(int argc, char* argv[])
 		printf("Unable to find target device.\n");
 		return -1;
 	}
+	printf("Target found.\n");
 	res = hid_get_manufacturer_string(handle, wstr, MAX_STR);
 	printf("Manufacturer:\t%ls\n", wstr);
 	res = hid_get_product_string(handle, wstr, MAX_STR);
@@ -84,10 +85,18 @@ int main(int argc, char* argv[])
 	// read .hex file
 	if (!ReadHexFile(argv[3]))
 		return 1;
-	//return 0;
+	
+	// check firmware is suitable for target
+	if (memcmp(&fw_info->mcu_signature, target_mcu_id, 3) != 0)
+	{
+		printf("Target MCU is wrong type.\n");
+		return -1;
+	}
+
 	if (!UpdateFirmware(handle))
 		return -1;
 
+	printf("\nFirmware update complete.\n");
 	return 0;
 }
 

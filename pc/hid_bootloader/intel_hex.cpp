@@ -11,7 +11,7 @@
 uint8_t firmware_buffer[FIRMWARE_BUFFER_SIZE];
 uint32_t firmware_crc = 0;
 uint32_t firmware_size = 0;
-FW_INFO_t *info = NULL;
+FW_INFO_t *fw_info = NULL;
 
 
 /**************************************************************************************************
@@ -49,12 +49,15 @@ bool ReadHexFile(char *filename)
 	FILE *fp;
 	bool res = true;
 
+	printf("\n");
+
 	fp = fopen(filename, "r");
 	if (fp == NULL)
 	{
 		printf("Unable to open %s.\n", filename);
 		return false;
 	}
+	printf("Loading %s...\n", filename);
 
 	memset(firmware_buffer, 0xFF, sizeof(firmware_buffer));
 	uint32_t	base_addr = 0;
@@ -130,12 +133,12 @@ bool ReadHexFile(char *filename)
 	if (ptr == 0xFFFFFFFF)
 	{
 		printf("Embedded info struct not found.\n");
-		info = NULL;
+		fw_info = NULL;
 		res = false;
 		goto exit;
 	}
-	info = (FW_INFO_t *)&firmware_buffer[ptr];
-	if (info->flash_size_b > FIRMWARE_BUFFER_SIZE)
+	fw_info = (FW_INFO_t *)&firmware_buffer[ptr];
+	if (fw_info->flash_size_b > FIRMWARE_BUFFER_SIZE)
 	{
 		printf("Embedded flash size greater than buffer size.\n");
 		res = false;
@@ -144,16 +147,16 @@ bool ReadHexFile(char *filename)
 
 	/*
 	FW_INFO_t zzz;
-	info = &zzz;
-	info->flash_size_b = 0x40000;
+	fw_info = &zzz;
+	fw_info->flash_size_b = 0x40000;
 	*/
-	firmware_crc = xmega_nvm_crc32(firmware_buffer, info->flash_size_b);
+	firmware_crc = xmega_nvm_crc32(firmware_buffer, fw_info->flash_size_b);
 	printf("Firmware CRC:\t0x%lX\n", firmware_crc);
 
-	printf("\n");
-	printf("Flash size:\t%u bytes (0x%X)\n", info->flash_size_b, info->flash_size_b);
-	printf("Page sise:\t%u bytes\n", info->page_size_b);
-	printf("Version:\t%u.%02u\n", info->version_major, info->version_minor);
+	printf("MCU ID:\t\t%02X%02X%02X\n", fw_info->mcu_signature[0], fw_info->mcu_signature[1], fw_info->mcu_signature[2]);
+	printf("Flash size:\t%u bytes (0x%X)\n", fw_info->flash_size_b, fw_info->flash_size_b);
+	printf("Page sise:\t%u bytes\n", fw_info->page_size_b);
+	printf("Version:\t%u.%02u\n", fw_info->version_major, fw_info->version_minor);
 	printf("\n");
 
 exit:
