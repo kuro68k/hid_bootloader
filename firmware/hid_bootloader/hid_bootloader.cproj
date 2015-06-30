@@ -119,85 +119,85 @@
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <ToolchainSettings>
       <AvrGcc>
-  <avrgcc.common.optimization.RelaxBranches>True</avrgcc.common.optimization.RelaxBranches>
-  <avrgcc.common.outputfiles.hex>True</avrgcc.common.outputfiles.hex>
-  <avrgcc.common.outputfiles.lss>True</avrgcc.common.outputfiles.lss>
-  <avrgcc.common.outputfiles.eep>True</avrgcc.common.outputfiles.eep>
-  <avrgcc.common.outputfiles.srec>True</avrgcc.common.outputfiles.srec>
-  <avrgcc.common.outputfiles.usersignatures>False</avrgcc.common.outputfiles.usersignatures>
-  <avrgcc.compiler.symbols.DefSymbols>
-    <ListValues>
-      <Value>NDEBUG</Value>
-      <Value>BOARD=USER_BOARD</Value>
-      <Value>F_CPU=16000000</Value>
-    </ListValues>
-  </avrgcc.compiler.symbols.DefSymbols>
-  <avrgcc.compiler.directories.IncludePaths>
-    <ListValues>
-      <Value>../common/applications/user_application/user_board/config</Value>
-      <Value>../src/ASF/xmega/utils</Value>
-      <Value>../src/config</Value>
-      <Value>../src/ASF/common/boards</Value>
-      <Value>../src/ASF/xmega/utils/preprocessor</Value>
-      <Value>../src/ASF/common/utils</Value>
-      <Value>../src</Value>
-      <Value>../src/ASF/common/boards/user_board</Value>
-      <Value>../src/ASF/xmega/drivers/cpu</Value>
-      <Value>../src/ASF/xmega/drivers/nvm</Value>
-      <Value>../src/ASF/xmega/drivers/sleep</Value>
-      <Value>../src/ASF/common/services/clock</Value>
-      <Value>../src/ASF/common/services/sleepmgr</Value>
-      <Value>../src/ASF/common/services/usb</Value>
-      <Value>../src/ASF/common/services/usb/class/hid</Value>
-      <Value>../src/ASF/common/services/usb/class/hid/device</Value>
-      <Value>../src/ASF/common/services/usb/class/hid/device/generic</Value>
-      <Value>../src/ASF/common/services/usb/udc</Value>
-      <Value>../src/ASF/xmega/drivers/usb</Value>
-    </ListValues>
-  </avrgcc.compiler.directories.IncludePaths>
-  <avrgcc.compiler.optimization.level>Optimize for size (-Os)</avrgcc.compiler.optimization.level>
-  <avrgcc.compiler.optimization.OtherFlags>-fdata-sections -fno-jump-tables</avrgcc.compiler.optimization.OtherFlags>
-  <avrgcc.compiler.optimization.PackStructureMembers>True</avrgcc.compiler.optimization.PackStructureMembers>
-  <avrgcc.compiler.optimization.AllocateBytesNeededForEnum>True</avrgcc.compiler.optimization.AllocateBytesNeededForEnum>
-  <avrgcc.compiler.optimization.DebugLevel>Maximum (-g3)</avrgcc.compiler.optimization.DebugLevel>
-  <avrgcc.compiler.warnings.AllWarnings>True</avrgcc.compiler.warnings.AllWarnings>
-  <avrgcc.compiler.miscellaneous.OtherFlags>-std=gnu99 -fno-strict-aliasing -Wstrict-prototypes -Werror-implicit-function-declaration -Wpointer-arith -mrelax</avrgcc.compiler.miscellaneous.OtherFlags>
-  <avrgcc.linker.libraries.Libraries>
-    <ListValues>
-      <Value>libm</Value>
-    </ListValues>
-  </avrgcc.linker.libraries.Libraries>
-  <avrgcc.linker.memorysettings.Flash>
-    <ListValues>
-      <Value>.text=0x20000</Value>
-    </ListValues>
-  </avrgcc.linker.memorysettings.Flash>
-  <avrgcc.linker.miscellaneous.LinkerFlags>-Wl,--relax</avrgcc.linker.miscellaneous.LinkerFlags>
-  <avrgcc.assembler.general.AssemblerFlags>-mrelax -DBOARD=USER_BOARD</avrgcc.assembler.general.AssemblerFlags>
-  <avrgcc.assembler.general.IncludePaths>
-    <ListValues>
-      <Value>../common/applications/user_application/user_board/config</Value>
-      <Value>../src/ASF/xmega/utils</Value>
-      <Value>../src/config</Value>
-      <Value>../src/ASF/common/boards</Value>
-      <Value>../src/ASF/xmega/utils/preprocessor</Value>
-      <Value>../src/ASF/common/utils</Value>
-      <Value>../src</Value>
-      <Value>../src/ASF/common/boards/user_board</Value>
-      <Value>../src/ASF/xmega/drivers/cpu</Value>
-      <Value>../src/ASF/xmega/drivers/nvm</Value>
-      <Value>../src/ASF/xmega/drivers/sleep</Value>
-      <Value>../src/ASF/common/services/clock</Value>
-      <Value>../src/ASF/common/services/sleepmgr</Value>
-      <Value>../src/ASF/common/services/usb</Value>
-      <Value>../src/ASF/common/services/usb/class/hid</Value>
-      <Value>../src/ASF/common/services/usb/class/hid/device</Value>
-      <Value>../src/ASF/common/services/usb/class/hid/device/generic</Value>
-      <Value>../src/ASF/common/services/usb/udc</Value>
-      <Value>../src/ASF/xmega/drivers/usb</Value>
-    </ListValues>
-  </avrgcc.assembler.general.IncludePaths>
-</AvrGcc>
+        <avrgcc.common.optimization.RelaxBranches>True</avrgcc.common.optimization.RelaxBranches>
+        <avrgcc.common.outputfiles.hex>True</avrgcc.common.outputfiles.hex>
+        <avrgcc.common.outputfiles.lss>True</avrgcc.common.outputfiles.lss>
+        <avrgcc.common.outputfiles.eep>True</avrgcc.common.outputfiles.eep>
+        <avrgcc.common.outputfiles.srec>True</avrgcc.common.outputfiles.srec>
+        <avrgcc.common.outputfiles.usersignatures>False</avrgcc.common.outputfiles.usersignatures>
+        <avrgcc.compiler.symbols.DefSymbols>
+          <ListValues>
+            <Value>NDEBUG</Value>
+            <Value>BOARD=USER_BOARD</Value>
+            <Value>F_CPU=16000000</Value>
+          </ListValues>
+        </avrgcc.compiler.symbols.DefSymbols>
+        <avrgcc.compiler.directories.IncludePaths>
+          <ListValues>
+            <Value>../common/applications/user_application/user_board/config</Value>
+            <Value>../src/ASF/xmega/utils</Value>
+            <Value>../src/config</Value>
+            <Value>../src/ASF/common/boards</Value>
+            <Value>../src/ASF/xmega/utils/preprocessor</Value>
+            <Value>../src/ASF/common/utils</Value>
+            <Value>../src</Value>
+            <Value>../src/ASF/common/boards/user_board</Value>
+            <Value>../src/ASF/xmega/drivers/cpu</Value>
+            <Value>../src/ASF/xmega/drivers/nvm</Value>
+            <Value>../src/ASF/xmega/drivers/sleep</Value>
+            <Value>../src/ASF/common/services/clock</Value>
+            <Value>../src/ASF/common/services/sleepmgr</Value>
+            <Value>../src/ASF/common/services/usb</Value>
+            <Value>../src/ASF/common/services/usb/class/hid</Value>
+            <Value>../src/ASF/common/services/usb/class/hid/device</Value>
+            <Value>../src/ASF/common/services/usb/class/hid/device/generic</Value>
+            <Value>../src/ASF/common/services/usb/udc</Value>
+            <Value>../src/ASF/xmega/drivers/usb</Value>
+          </ListValues>
+        </avrgcc.compiler.directories.IncludePaths>
+        <avrgcc.compiler.optimization.level>Optimize for size (-Os)</avrgcc.compiler.optimization.level>
+        <avrgcc.compiler.optimization.OtherFlags>-fdata-sections -fno-jump-tables</avrgcc.compiler.optimization.OtherFlags>
+        <avrgcc.compiler.optimization.PackStructureMembers>True</avrgcc.compiler.optimization.PackStructureMembers>
+        <avrgcc.compiler.optimization.AllocateBytesNeededForEnum>True</avrgcc.compiler.optimization.AllocateBytesNeededForEnum>
+        <avrgcc.compiler.optimization.DebugLevel>Maximum (-g3)</avrgcc.compiler.optimization.DebugLevel>
+        <avrgcc.compiler.warnings.AllWarnings>True</avrgcc.compiler.warnings.AllWarnings>
+        <avrgcc.compiler.miscellaneous.OtherFlags>-std=gnu99 -fno-strict-aliasing -Wstrict-prototypes -Werror-implicit-function-declaration -Wpointer-arith -mrelax</avrgcc.compiler.miscellaneous.OtherFlags>
+        <avrgcc.linker.libraries.Libraries>
+          <ListValues>
+            <Value>libm</Value>
+          </ListValues>
+        </avrgcc.linker.libraries.Libraries>
+        <avrgcc.linker.memorysettings.Flash>
+          <ListValues>
+            <Value>.text=0x20000</Value>
+          </ListValues>
+        </avrgcc.linker.memorysettings.Flash>
+        <avrgcc.linker.miscellaneous.LinkerFlags>-Wl,--relax</avrgcc.linker.miscellaneous.LinkerFlags>
+        <avrgcc.assembler.general.AssemblerFlags>-mrelax -DBOARD=USER_BOARD</avrgcc.assembler.general.AssemblerFlags>
+        <avrgcc.assembler.general.IncludePaths>
+          <ListValues>
+            <Value>../common/applications/user_application/user_board/config</Value>
+            <Value>../src/ASF/xmega/utils</Value>
+            <Value>../src/config</Value>
+            <Value>../src/ASF/common/boards</Value>
+            <Value>../src/ASF/xmega/utils/preprocessor</Value>
+            <Value>../src/ASF/common/utils</Value>
+            <Value>../src</Value>
+            <Value>../src/ASF/common/boards/user_board</Value>
+            <Value>../src/ASF/xmega/drivers/cpu</Value>
+            <Value>../src/ASF/xmega/drivers/nvm</Value>
+            <Value>../src/ASF/xmega/drivers/sleep</Value>
+            <Value>../src/ASF/common/services/clock</Value>
+            <Value>../src/ASF/common/services/sleepmgr</Value>
+            <Value>../src/ASF/common/services/usb</Value>
+            <Value>../src/ASF/common/services/usb/class/hid</Value>
+            <Value>../src/ASF/common/services/usb/class/hid/device</Value>
+            <Value>../src/ASF/common/services/usb/class/hid/device/generic</Value>
+            <Value>../src/ASF/common/services/usb/udc</Value>
+            <Value>../src/ASF/xmega/drivers/usb</Value>
+          </ListValues>
+        </avrgcc.assembler.general.IncludePaths>
+      </AvrGcc>
     </ToolchainSettings>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -297,6 +297,12 @@
     <None Include="src\asf.h">
       <SubType>compile</SubType>
     </None>
+    <Compile Include="misc_asm.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="misc_asm.S">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="protocol.h">
       <SubType>compile</SubType>
     </Compile>

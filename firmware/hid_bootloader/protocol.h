@@ -24,6 +24,7 @@
 #define CMD_READ_USER_SIG_ROW		0x0B
 #define CMD_READ_SERIAL				0x0C
 #define CMD_READ_BOOTLOADER_VERSION	0x0D
+#define CMD_RESET_MCU				0x0E
 
 
 #endif /* PROTOCOL_H_ */

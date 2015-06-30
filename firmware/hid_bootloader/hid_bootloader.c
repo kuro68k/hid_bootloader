@@ -12,6 +12,7 @@
 #include <string.h>
 #include <asf.h>
 #include "sp_driver.h"
+#include "misc_asm.h"
 #include "protocol.h"
 
 #define BOOTLOADER_VERSION	1
@@ -228,6 +229,11 @@ void HID_set_feature_report_out(uint8_t *report)
 		
 		case CMD_READ_BOOTLOADER_VERSION:
 			response[3] = BOOTLOADER_VERSION;
+			break;
+		
+		case CMD_RESET_MCU:
+			reset_mcu();
+			response[1] = 0xFF;	// failed
 			break;
 		
 		// unknown command
