@@ -37,7 +37,7 @@ int main(int argc, char* argv[])
 {
 	int res;
 	wchar_t wstr[MAX_STR];
-	
+
 	// command line arguments
 	if (argc != 4)
 	{
@@ -85,7 +85,7 @@ int main(int argc, char* argv[])
 	// read .hex file
 	if (!ReadHexFile(argv[3]))
 		return 1;
-	
+
 	// check firmware is suitable for target
 	if (memcmp(&fw_info->mcu_signature, target_mcu_id, 3) != 0)
 	{
@@ -147,6 +147,7 @@ bool ExecuteHIDCommand(hid_device *handle, uint8_t command, uint16_t addr, int t
 bool UpdateFirmware(hid_device *handle)
 {
 	uint8_t buffer[BUFFER_SIZE];
+	int num_pages = fw_info->flash_size_b / fw_info->page_size_b;
 
 	// erase app section
 	printf("Erasing application section...\n");
@@ -159,13 +160,13 @@ bool UpdateFirmware(hid_device *handle)
 
 	// write app section
 	printf("Writing firmware image...");
-	for (int page = 0; page < APP_SECTION_NUM_PAGES; page++)
+	for (int page = 0; page < num_pages; page++)
 	{
 		// load page into RAM buffer
-		for (int byte = 0; byte < APP_SECTION_PAGE_SIZE; byte += HID_DATA_BYTES)
+		for (int byte = 0; byte < fw_info->page_size_b; byte += HID_DATA_BYTES)
 		{
 			buffer[0] = 0;	// mandatory report ID, not sent
-			memcpy(&buffer[1], &firmware_buffer[(page*APP_SECTION_PAGE_SIZE) + byte], HID_DATA_BYTES);
+			memcpy(&buffer[1], &firmware_buffer[(page*fw_info->page_size_b) + byte], HID_DATA_BYTES);
 			int res = hid_write(handle, buffer, BUFFER_SIZE);
 			if (res == -1)
 			{
