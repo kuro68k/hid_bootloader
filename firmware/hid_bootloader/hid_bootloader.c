@@ -11,6 +11,7 @@
 #include <util/delay.h>
 #include <string.h>
 #include <asf.h>
+#include "eeprom.h"
 #include "sp_driver.h"
 #include "misc_asm.h"
 #include "protocol.h"
@@ -164,7 +165,7 @@ void HID_set_feature_report_out(uint8_t *report)
 			}
 			else
 			{
-				memcpy_P(page_buffer, (const void *)((APP_SECTION_START) + (APP_SECTION_PAGE_SIZE * addr)), APP_SECTION_PAGE_SIZE);
+				memcpy_P(page_buffer, (const void *)(APP_SECTION_START + (APP_SECTION_PAGE_SIZE * addr)), APP_SECTION_PAGE_SIZE);
 				memcpy(&response[3], page_buffer, 32);
 				page_ptr = 0;
 			}
@@ -192,7 +193,7 @@ void HID_set_feature_report_out(uint8_t *report)
 			}
 			else
 			{
-				memcpy_P(page_buffer, (const void *)(USER_SIGNATURES_SIZE + addr), USER_SIGNATURES_SIZE);
+				memcpy_P(page_buffer, (const void *)(USER_SIGNATURES_START + addr), USER_SIGNATURES_SIZE);
 				memcpy(&response[3], page_buffer, 32);
 				page_ptr = 0;
 			}
@@ -234,6 +235,35 @@ void HID_set_feature_report_out(uint8_t *report)
 		case CMD_RESET_MCU:
 			reset_mcu();
 			response[1] = 0xFF;	// failed
+			break;
+		
+		case CMD_READ_EEPROM:
+			if (addr > (EEPROM_SIZE - 32))
+			{
+				response[1] = 0xFF;
+				response[2] = 0xFF;
+			}
+			else
+			{
+				EEP_EnableMapping();
+				memcpy_P(page_buffer, (const void *)(MAPPED_EEPROM_START + addr), APP_SECTION_PAGE_SIZE);
+				EEP_DisableMapping();
+				memcpy(&response[3], page_buffer, 32);
+				page_ptr = 0;
+			}
+			break;
+
+		case CMD_WRITE_EEPROM:
+			if (addr > (EEPROM_SIZE / EEPROM_PAGE_SIZE))
+			{
+				response[1] = 0xFF;
+				response[2] = 0xFF;
+			}
+			else
+			{
+				EEP_LoadPageBuffer(page_buffer, EEPROM_PAGE_SIZE);
+				EEP_AtomicWritePage(addr);
+			}
 			break;
 		
 		// unknown command

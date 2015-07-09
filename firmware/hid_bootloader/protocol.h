@@ -25,6 +25,8 @@
 #define CMD_READ_SERIAL				0x0C
 #define CMD_READ_BOOTLOADER_VERSION	0x0D
 #define CMD_RESET_MCU				0x0E
+#define CMD_READ_EEPROM				0x0F
+#define CMD_WRITE_EEPROM			0x10
 
 
 #endif /* PROTOCOL_H_ */

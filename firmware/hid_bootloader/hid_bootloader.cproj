@@ -288,6 +288,12 @@
     <Compile Include="avr_compiler.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="eeprom.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="eeprom.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="hid_bootloader.c">
       <SubType>compile</SubType>
     </Compile>
