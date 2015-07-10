@@ -77,7 +77,7 @@ int main(int argc, char* argv[])
 	printf("Product:\t%ls\n", wstr);
 	//res = hid_get_serial_number_string(handle, wstr, MAX_STR);
 	//printf("Serial:\t%ls\n", wstr);
-
+	
 	// get bootloader info
 	if (!GetBootloaderInfo(handle))
 		return 1;
@@ -148,6 +148,8 @@ bool UpdateFirmware(hid_device *handle)
 {
 	uint8_t buffer[BUFFER_SIZE];
 	int num_pages = fw_info->flash_size_b / fw_info->page_size_b;
+
+	printf("Pages:\t%d\n", num_pages);
 
 	// erase app section
 	printf("Erasing application section...\n");

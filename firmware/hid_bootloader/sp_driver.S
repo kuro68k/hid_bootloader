@@ -70,7 +70,7 @@
 
 /* Define the size of the flash page if not defined in the header files. */
 #ifndef FLASH_PAGE_SIZE
-	#define FLASH_PAGE_SIZE 512
+	#define FLASH_PAGE_SIZE APP_SECTION_PAGE_SIZE
 #endif /*FLASH_PAGE_SIZE*/
 
 /* Defines not yet included in header file. */
@@ -383,26 +383,26 @@ SP_EraseApplicationSection:
 .global SP_LoadFlashPage
 
 SP_LoadFlashPage:
-	clr	ZL              ; Clear low byte of Z, to indicate start of page.
-	clr	ZH              ; Clear high byte of Z, to indicate start of page.
+	clr		ZL              ; Clear low byte of Z, to indicate start of page.
+	clr		ZH              ; Clear high byte of Z, to indicate start of page.
 
-	out	RAMPX, r1       ; Clear RAMPX pointer.
+	out		RAMPX, r1       ; Clear RAMPX pointer.
 	movw	XL, r24         ; Load X with data buffer address.
 
 	ldi 	r20, NVM_CMD_LOAD_FLASH_BUFFER_gc  ; Prepare NVM command code in R20.
-	sts	NVM_CMD, r20                       ; Load it into NVM command register.
+	sts		NVM_CMD, r20                       ; Load it into NVM command register.
 
 #if FLASH_PAGE_SIZE > 512
-	ldi	r22, ((FLASH_PAGE_SIZE/2) >> 8)
+	ldi		r22, ((FLASH_PAGE_SIZE/2) >> 8)
 #endif
 
-	ldi	r21, ((FLASH_PAGE_SIZE/2)&0xFF)    ; Load R21 with page word count.
-	ldi	r18, CCP_SPM_gc                    ; Prepare Protect SPM signature in R16.
+	ldi		r21, ((FLASH_PAGE_SIZE/2)&0xFF)    ; Load R21 with page word count.
+	ldi		r18, CCP_SPM_gc                    ; Prepare Protect SPM signature in R16.
 
 SP_LoadFlashPage_1:
-	ld	r0, X+         ; Load low byte from buffer into R0.
-	ld	r1, X+         ; Load high byte from buffer into R1.
-	sts	CCP, r18       ; Enable SPM operation (this disables interrupts for 4 cycles).
+	ld		r0, X+         ; Load low byte from buffer into R0.
+	ld		r1, X+         ; Load high byte from buffer into R1.
+	sts		CCP, r18       ; Enable SPM operation (this disables interrupts for 4 cycles).
 	spm                    ; Self-program.
 	adiw	ZL, 2          ; Move Z to next Flash word.
 
