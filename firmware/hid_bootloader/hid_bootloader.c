@@ -261,7 +261,7 @@ void HID_set_feature_report_out(uint8_t *report)
 			}
 			else
 			{
-				EEP_LoadPageBuffer(page_buffer, EEPROM_PAGE_SIZE);
+				EEP_LoadPageBuffer(&report[3], EEPROM_PAGE_SIZE);
 				EEP_AtomicWritePage(addr);
 			}
 			break;
