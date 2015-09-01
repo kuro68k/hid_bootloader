@@ -69,9 +69,9 @@
 //	(USB_CONFIG_ATTR_REMOTE_WAKEUP|USB_CONFIG_ATTR_BUS_POWERED)
 
 //! USB Device string definitions (Optional)
- #define  USB_DEVICE_MANUFACTURE_NAME      "Keio"
- #define  USB_DEVICE_PRODUCT_NAME          "USB Bootloader"
-// #define  USB_DEVICE_SERIAL_NAME           "12...EF"
+#define  USB_DEVICE_MANUFACTURE_NAME      "Keio"
+#define  USB_DEVICE_PRODUCT_NAME          "USB Bootloader"
+// serial number removed
 //#define	USB_DEVICE_SERIAL_NAME
 //#define	USB_DEVICE_GET_SERIAL_NAME_POINTER USB_serial_number
 //#define	USB_DEVICE_GET_SERIAL_NAME_LENGTH  25
