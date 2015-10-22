@@ -5,13 +5,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <stdbool.h>
 #include <string.h>
 #include <windows.h>
 
-//#include "getopt.h"
 #include "hidapi.h"
 #include "intel_hex.h"
 #include "bootloader.h"
+#include "getopt.h"
 
 
 #define MAX_STR				255
@@ -31,6 +32,86 @@ bool GetBootloaderInfo(hid_device *handle);
 
 uint8_t target_mcu_id[4] = { 0, 0, 0, 0 };
 uint8_t	target_mcu_fuses[6] = { 0, 0, 0, 0, 0, 0 };
+char *hexfile = NULL;
+unsigned short vid, pid;
+bool opt_reset = false;
+
+
+/**************************************************************************************************
+* Hand command line args
+*
+* -r	reset target when programming complete
+*/
+int parse_args(int argc, char *argv[])
+{
+	int c;
+
+	while ((c = getopt(argc, argv, "r")) != -1)
+	{
+		switch (c)
+		{
+		case 'r':
+			opt_reset = true;
+			break;
+
+		case '?':
+			printf("Unknown option -%c.\n", optopt);
+			return 1;
+		}
+	}
+
+
+	// non option arguments
+	int j = 0;
+	long int temp;
+	for (int i = optind; i < argc; i++)
+	{
+		printf("Opt: %s\n", argv[i]);
+		switch (j)
+		{
+		case 0:
+			temp = strtol(argv[i], NULL, 0);
+			if (temp > 0xFFFF)
+			{
+				printf("Bad VID (%lX)\n", temp);
+				return 1;
+			}
+			vid = (unsigned short)temp;
+			break;
+
+		case 1:
+			temp = strtol(argv[i], NULL, 0);
+			if (temp > 0xFFFF)
+			{
+				printf("Bad PID (%lX)\n", temp);
+				return 1;
+			}
+			pid = (unsigned short)temp;
+			break;
+
+		case 2:
+			hexfile = argv[i];
+			break;
+
+		default:
+			printf("Too many arguments.\n");
+			return 1;
+		}
+		j++;
+	}
+
+	if (j < 3)
+	{
+		printf("Usage: [-r] <vid> <pid> <firmware.hex>\n");
+		printf("\nOptions:\n");
+		printf("\t-r\treset after loading firmware\n");
+		return 1;
+	}
+
+	//printf("VID: %04X PID: %04X\n", vid, pid);
+	//printf("hexfile: %s\n", hexfile);
+	return 0;
+}
 
 
 int main(int argc, char* argv[])
@@ -38,37 +119,18 @@ int main(int argc, char* argv[])
 	int res;
 	wchar_t wstr[MAX_STR];
 
-	// command line arguments
-	if (argc != 4)
-	{
-		printf("Usage: <vid> <pid> <firmware.hex>\n");
-		return -1;
-	}
-	unsigned short vid, pid;
-	long int temp;
-	temp = strtol(argv[1], NULL, 0);
-	if (temp > 0xFFFF)
-	{
-		printf("Bad VID (%lX)\n", temp);
-		return -1;
-	}
-	vid = (unsigned short)temp;
-	temp = strtol(argv[2], NULL, 0);
-	if (temp > 0xFFFF)
-	{
-		printf("Bad PID (%lX)\n", temp);
-		return -1;
-	}
-	pid = (unsigned short)temp;
-	
+	res = parse_args(argc, argv);
+	if (res != 0)
+		return res;
+
 	// find target HID device
 	hid_device *handle;
-	handle = hid_open(0x8282, 0xB71D, NULL);
+	handle = hid_open(vid, pid, NULL);
 
 	if (handle == NULL)
 	{
 		printf("Unable to find target device.\n");
-		return -1;
+		return 1;
 	}
 	printf("Target found.\n");
 	res = hid_get_manufacturer_string(handle, wstr, MAX_STR);
@@ -83,18 +145,18 @@ int main(int argc, char* argv[])
 		return 1;
 
 	// read .hex file
-	if (!ReadHexFile(argv[3]))
+	if (!ReadHexFile(hexfile))
 		return 1;
 
 	// check firmware is suitable for target
 	if (memcmp(&fw_info->mcu_signature, target_mcu_id, 3) != 0)
 	{
 		printf("Target MCU is wrong type.\n");
-		return -1;
+		return 1;
 	}
 
 	if (!UpdateFirmware(handle))
-		return -1;
+		return 1;
 
 	printf("\nFirmware update complete.\n");
 	return 0;
@@ -204,6 +266,17 @@ bool UpdateFirmware(hid_device *handle)
 	{
 		printf("Firmware image CRC does not match device.\n");
 		return false;
+	}
+
+	// firmware written OK, reset target
+	if (opt_reset)
+	{
+		if (!ExecuteHIDCommand(handle, CMD_RESET_MCU, 0, NO_RESPONSE, buffer))
+		{
+			printf("Failed to reset target.\n");
+			printf("%ls\n", hid_error(handle));
+			return false;
+		}
 	}
 
 	return true;

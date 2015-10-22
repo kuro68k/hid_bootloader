@@ -83,18 +83,14 @@
     <ClInclude Include="getopt.h" />
     <ClInclude Include="hidapi.h" />
     <ClInclude Include="intel_hex.h" />
-    <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="crc.cpp" />
+    <ClCompile Include="crc.c" />
+    <ClCompile Include="getopt.c" />
     <ClCompile Include="hid.c" />
-    <ClCompile Include="hid_bootloader.cpp" />
-    <ClCompile Include="intel_hex.cpp" />
-    <ClCompile Include="stdafx.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
-    </ClCompile>
+    <ClCompile Include="hid_bootloader.c" />
+    <ClCompile Include="intel_hex.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
