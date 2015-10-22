@@ -13,7 +13,6 @@
 #include <asf.h>
 #include "eeprom.h"
 #include "sp_driver.h"
-#include "misc_asm.h"
 #include "protocol.h"
 
 #define BOOTLOADER_VERSION	1
@@ -233,7 +232,7 @@ void HID_set_feature_report_out(uint8_t *report)
 			break;
 		
 		case CMD_RESET_MCU:
-			reset_mcu();
+			reset_do_soft_reset();
 			response[1] = 0xFF;	// failed
 			break;
 		

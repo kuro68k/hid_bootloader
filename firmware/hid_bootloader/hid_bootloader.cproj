@@ -303,12 +303,6 @@
     <None Include="src\asf.h">
       <SubType>compile</SubType>
     </None>
-    <Compile Include="misc_asm.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="misc_asm.S">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="protocol.h">
       <SubType>compile</SubType>
     </Compile>
