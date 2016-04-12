@@ -38,7 +38,7 @@ bool opt_reset = false;
 
 
 /**************************************************************************************************
-* Hand command line args
+* Handle command line args
 *
 * -r	reset target when programming complete
 */

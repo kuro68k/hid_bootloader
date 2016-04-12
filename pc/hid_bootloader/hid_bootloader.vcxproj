@@ -75,9 +75,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <Text Include="ReadMe.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="bootloader.h" />
     <ClInclude Include="crc.h" />
     <ClInclude Include="getopt.h" />
