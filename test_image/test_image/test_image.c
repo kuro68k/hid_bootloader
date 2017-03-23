@@ -1,8 +1,6 @@
 /*
  * test_image.c
  *
- * Created: 28/04/2015 14:27:10
- *  Author: paul.qureshi
  */ 
 
 

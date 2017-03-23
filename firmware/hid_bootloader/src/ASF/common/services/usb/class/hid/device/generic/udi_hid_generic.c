@@ -110,6 +110,7 @@ COMPILER_WORD_ALIGNED
 //@}
 
 //! HID report descriptor for standard HID generic
+/*
 UDC_DESC_STORAGE udi_hid_generic_report_desc_t udi_hid_generic_report_desc = { {
 				0x06, 0xFF, 0xFF,	// 04|2   , Usage Page (vendor defined?)
 				0x09, 0x01,	// 08|1   , Usage      (vendor defined
@@ -142,6 +143,30 @@ UDC_DESC_STORAGE udi_hid_generic_report_desc_t udi_hid_generic_report_desc = { {
 				0xB1, 0x02,	// B0|1   , Feature report
 				0xC0	// C0|0   , End Collection
 		}
+};
+*/
+UDC_DESC_STORAGE udi_hid_generic_report_desc_t udi_hid_generic_report_desc = { {
+		0x06, 0x00, 0xFF,				//	USAGE_PAGE (Vendor Defined Page 1)
+		0x09, 0x01,						//	USAGE (Vendor Usage 1)
+		0xA1, 0x01,						//	COLLECTION (Application)
+
+		0x15, 0x00,							//	LOGICAL_MINIMUM (0)
+		0x26, 0xFF, 0x00,					//	LOGICAL_MAXIMUM (255)
+		0x75, 0x08,							//	REPORT_SIZE (8)
+
+		0x95, 0x05,							//	REPORT_COUNT (5)
+		0x09, 0x00,							//	USAGE (Undefined)
+		0xB2, 0x02, 0x01,					//	FEATURE (Data,Var,Abs,Buf)
+
+		0x95, 0x40,							//	REPORT_COUNT (64)
+		0x09, 0x00,							//	USAGE (Undefined)
+		0x82, 0x02, 0x01,					//	INPUT (Data,Var,Abs,Buf)
+
+		0x09, 0x00,							//	USAGE (Undefined)
+		0x92, 0x02, 0x01,					//	OUTPUT (Data,Var,Abs,Buf)
+
+		0xc0							// END_COLLECTION
+	}
 };
 
 /**

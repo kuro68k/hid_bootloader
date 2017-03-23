@@ -1,0 +1,17 @@
+
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Atmel Studio Solution File, Format Version 11.00
+Project("{54F91283-7BC4-4236-8FF9-10F437C3AD48}") = "hid_bootloader", "hid_bootloader\hid_bootloader_6_2.cproj", "{ABD3D63E-0C65-4C68-B186-AD5762B4BD35}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Release|AVR = Release|AVR
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{ABD3D63E-0C65-4C68-B186-AD5762B4BD35}.Release|AVR.ActiveCfg = Release|AVR
+		{ABD3D63E-0C65-4C68-B186-AD5762B4BD35}.Release|AVR.Build.0 = Release|AVR
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

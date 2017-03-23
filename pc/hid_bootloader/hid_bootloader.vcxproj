@@ -80,6 +80,7 @@
     <ClInclude Include="getopt.h" />
     <ClInclude Include="hidapi.h" />
     <ClInclude Include="intel_hex.h" />
+    <ClInclude Include="opt_output.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>

@@ -81,8 +81,8 @@ bool udi_hid_setup( uint8_t *rate, uint8_t *protocol, uint8_t *report_desc, bool
 			switch (udd_g_ctrlreq.req.bRequest) {
 
 			case USB_REQ_HID_GET_REPORT:
-				// TODO
-				break;
+				// hack: not implemented in original code
+				return UDI_HID_GENERIC_GET_FEATURE(&udd_g_ctrlreq.payload, &udd_g_ctrlreq.payload_size);
 
 			case USB_REQ_HID_GET_IDLE:
 				udd_g_ctrlreq.payload = rate;

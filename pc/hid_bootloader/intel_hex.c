@@ -7,6 +7,7 @@
 #include <stdbool.h>
 #include "intel_hex.h"
 #include "crc.h"
+#include "opt_output.h"
 
 
 uint8_t firmware_buffer[FIRMWARE_BUFFER_SIZE];
@@ -50,15 +51,15 @@ bool ReadHexFile(char *filename)
 	FILE *fp;
 	bool res = true;
 
-	printf("\n");
+	quiet_printf("\n");
 
 	fp = fopen(filename, "r");
 	if (fp == NULL)
 	{
-		printf("Unable to open %s.\n", filename);
+		silent_printf("Unable to open %s.\n", filename);
 		return false;
 	}
-	printf("Loading %s...\n", filename);
+	quiet_printf("Loading %s...\n", filename);
 
 	memset(firmware_buffer, 0xFF, sizeof(firmware_buffer));
 	uint32_t	base_addr = 0;
@@ -74,7 +75,7 @@ bool ReadHexFile(char *filename)
 
 		if (line[0] != ':')
 		{
-			printf("Invalid line %d (missing colon)\n", line_num);
+			silent_printf("Invalid line %d (missing colon)\n", line_num);
 			res = false;
 			break;
 		}
@@ -97,7 +98,7 @@ bool ReadHexFile(char *filename)
 				uint32_t absadr = base_addr + (addr++);
 				if (absadr > FIRMWARE_BUFFER_SIZE)
 				{
-					printf("Firmware image too large for buffer (%X).\n", absadr);
+					silent_printf("Firmware image too large for buffer (%X).\n", absadr);
 					res = false;
 					goto exit;
 				}
@@ -111,7 +112,7 @@ bool ReadHexFile(char *filename)
 		case 2:		// extended segment address record
 			if (len != 2)
 			{
-				printf("Invalid line %d (bad extended segment address length: %u)\n", line_num, len);
+				silent_printf("Invalid line %d (bad extended segment address length: %u)\n", line_num, len);
 				res = false;
 				break;
 			}
@@ -127,13 +128,13 @@ bool ReadHexFile(char *filename)
 			break;
 	}
 
-	printf("Firmware size:\t%u bytes (0x%X)\n", firmware_size, firmware_size);
+	quiet_printf("Firmware size:\t%u bytes (0x%X)\n", firmware_size, firmware_size);
 
 	// find embedded info
 	uint32_t ptr = FindEmbeddedInfo();
 	if (ptr == 0xFFFFFFFF)
 	{
-		printf("Embedded info struct not found.\n");
+		silent_printf("Embedded info struct not found.\n");
 		fw_info = NULL;
 		res = false;
 		goto exit;
@@ -141,24 +142,20 @@ bool ReadHexFile(char *filename)
 	fw_info = (FW_INFO_t *)&firmware_buffer[ptr];
 	if (fw_info->flash_size_b > FIRMWARE_BUFFER_SIZE)
 	{
-		printf("Embedded flash size greater than buffer size.\n");
+		silent_printf("Embedded flash size greater than buffer size.\n");
 		res = false;
 		goto exit;
 	}
 
-	/*
-	FW_INFO_t zzz;
-	fw_info = &zzz;
-	fw_info->flash_size_b = 0x40000;
-	*/
 	firmware_crc = xmega_nvm_crc32(firmware_buffer, fw_info->flash_size_b);
-	printf("Firmware CRC:\t0x%lX\n", firmware_crc);
+	quiet_printf("Firmware CRC:\t0x%lX\n", firmware_crc);
 
-	printf("MCU ID:\t\t%02X%02X%02X\n", fw_info->mcu_signature[0], fw_info->mcu_signature[1], fw_info->mcu_signature[2]);
-	printf("Flash size:\t%u bytes (0x%X)\n", fw_info->flash_size_b, fw_info->flash_size_b);
-	printf("Page sise:\t%u bytes\n", fw_info->page_size_b);
-	printf("Version:\t%u.%02u\n", fw_info->version_major, fw_info->version_minor);
-	printf("\n");
+	quiet_printf("MCU ID:\t\t%02X%02X%02X\n", fw_info->mcu_signature[0], fw_info->mcu_signature[1], fw_info->mcu_signature[2]);
+	//printf("Flash size:\t%u bytes (0x%X)\n", fw_info->flash_size_b, fw_info->flash_size_b);
+	quiet_printf("Flash size:\t%u KB (0x%X)\n", fw_info->flash_size_b / 1024, fw_info->flash_size_b);
+	quiet_printf("Page sise:\t%u\n", fw_info->page_size_b);
+	quiet_printf("Version:\t%u.%02u\n", fw_info->version_major, fw_info->version_minor);
+	quiet_printf("\n");
 
 exit:
 	fclose(fp);

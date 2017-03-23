@@ -143,16 +143,21 @@
 extern void HID_report_out(uint8_t *report);
 #define  UDI_HID_GENERIC_SET_FEATURE(f) HID_set_feature_report_out(f)
 extern void HID_set_feature_report_out(uint8_t *report);
+#define  UDI_HID_GENERIC_GET_FEATURE(payload, size) HID_get_feature_report_out(payload, size)
+extern bool HID_get_feature_report_out(uint8_t **payload, uint16_t *size);
+
 
 //! Sizes of I/O reports
 #define  UDI_HID_REPORT_IN_SIZE             64
 #define  UDI_HID_REPORT_OUT_SIZE            64
-#define  UDI_HID_REPORT_FEATURE_SIZE        64
+#define  UDI_HID_REPORT_FEATURE_SIZE        5
 
 //! Sizes of I/O endpoints
 #define  UDI_HID_GENERIC_EP_SIZE            64
 //@}
 //@}
+
+
 
 
 /**

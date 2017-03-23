@@ -1,8 +1,6 @@
 /*
  * eeprom.c
  *
- * Author:	Paul Qureshi
- * Created: 26/06/2012 13:25:00
  */
 
 #include <string.h>
@@ -32,7 +30,7 @@ void EEP_LoadPageBuffer(const uint8_t *data, uint8_t size)
 		NVM.ADDR0 = i;
 		NVM.DATA0 = *data++;
 	}
-	
+
 	EEP_WaitForNVM();
 }
 
@@ -57,7 +55,7 @@ void EEP_AtomicWritePage(uint8_t page_addr)
 	// Issue EEPROM Atomic Write (Erase&Write) command
 	NVM.CMD = NVM_CMD_ERASE_WRITE_EEPROM_PAGE_gc;
 	NVM_EXEC();
-	
+
 	EEP_WaitForNVM();
 }
 
@@ -75,7 +73,7 @@ void EEP_EraseAll(void)
 	// Issue EEPROM Erase All command
 	NVM.CMD = NVM_CMD_ERASE_EEPROM_gc;
 	NVM_EXEC();
-	
+
 	EEP_WaitForNVM();
 }
 
