@@ -1,7 +1,6 @@
-// hid_bootloader.cpp : Defines the entry point for the console application.
+// hid_bootloader.cpp
 //
 
-//#include "stdafx.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -10,6 +9,7 @@
 #include <windows.h>
 
 #include "hidapi.h"
+#include "libusb.h"
 #include "intel_hex.h"
 #include "bootloader.h"
 #include "getopt.h"
