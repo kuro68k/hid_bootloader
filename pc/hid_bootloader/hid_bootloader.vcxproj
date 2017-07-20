@@ -55,7 +55,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>Setupapi.lib;hidapi.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libusb-1.0.lib;Setupapi.lib;hidapi.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -79,7 +79,9 @@
     <ClInclude Include="crc.h" />
     <ClInclude Include="getopt.h" />
     <ClInclude Include="hidapi.h" />
+    <ClInclude Include="hid_mode.h" />
     <ClInclude Include="intel_hex.h" />
+    <ClInclude Include="libusb.h" />
     <ClInclude Include="opt_output.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
@@ -88,7 +90,9 @@
     <ClCompile Include="getopt.c" />
     <ClCompile Include="hid.c" />
     <ClCompile Include="hid_bootloader.c" />
+    <ClCompile Include="hid_mode.c" />
     <ClCompile Include="intel_hex.c" />
+    <ClCompile Include="libusb_mode.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

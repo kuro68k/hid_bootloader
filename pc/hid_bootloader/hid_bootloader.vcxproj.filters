@@ -36,6 +36,12 @@
     <ClInclude Include="opt_output.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="libusb.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="hid_mode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="hid.c">
@@ -51,6 +57,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="crc.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="hid_mode.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="libusb_mode.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
