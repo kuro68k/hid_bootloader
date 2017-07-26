@@ -1,5 +1,7 @@
 # hid_bootloader
 
+### **Now part of kboot project: https://github.com/kuro68k/kboot**
+
 (C) 2015 Paul Qureshi
 Licence: GPL 3.0
 
